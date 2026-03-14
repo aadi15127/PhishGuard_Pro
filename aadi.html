@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PhishGuard Pro | Global Defense Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #020617;
+            --card-bg: rgba(15, 23, 42, 0.9);
+            --primary: #a3e635;
+            --danger: #ef4444;
+            --text: #f8fafc;
+            --accent: #22d3ee;
+            --line-1: rgba(163, 230, 53, 0.05);
+            --line-2: rgba(34, 211, 238, 0.05);
+        }
+
+        * { box-sizing: border-box; transition: all 0.3s ease; }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Space Grotesk', sans-serif;
+            margin: 0;
+            overflow-x: hidden;
+            background-image: 
+                linear-gradient(var(--line-1) 1px, transparent 1px),
+                linear-gradient(90deg, var(--line-1) 1px, transparent 1px),
+                linear-gradient(var(--line-2) 2px, transparent 2px),
+                linear-gradient(90deg, var(--line-2) 2px, transparent 2px);
+            background-size: 30px 30px, 30px 30px, 120px 120px, 120px 120px;
+        }
+
+        /* --- INTRO POPUP --- */
+        #intro-popup {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9); display: flex; align-items: center; justify-content: center;
+            z-index: 2000; padding: 20px;
+        }
+        .intro-card {
+            background: var(--card-bg); border: 2px solid var(--primary); padding: 2rem;
+            max-width: 600px; border-radius: 20px; text-align: center;
+        }
+
+        /* --- UI ELEMENTS --- */
+        .navbar { padding: 1rem 10%; display: flex; justify-content: space-between; border-bottom: 1px solid rgba(163, 230, 53, 0.2); }
+        .logo { font-size: 1.5rem; font-weight: 700; color: var(--primary); letter-spacing: 3px; cursor: pointer; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+
+        /* RADAR & LEADERBOARD GRID */
+        .dashboard-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem; margin-bottom: 2rem; }
+        .radar-box { background: var(--card-bg); border-radius: 24px; border: 1px solid rgba(255,255,255,0.1); overflow: hidden; }
+        .radar-screen { height: 250px; background: radial-gradient(circle, #0f172a 0%, #020617 100%); position: relative; overflow: hidden; }
+        .sweep { position: absolute; width: 100%; height: 100%; background: conic-gradient(from 0deg, transparent 0%, rgba(34, 211, 238, 0.1) 25%, transparent 50%); animation: rotation 4s linear infinite; }
+        @keyframes rotation { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        
+        .leaderboard-box { background: var(--card-bg); border-radius: 24px; border: 1px solid rgba(255,255,255,0.1); padding: 1.5rem; font-family: 'JetBrains Mono'; }
+        .leader-entry { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+
+        /* FEATURE CARDS */
+        .feature-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; }
+        .glass-card { background: var(--card-bg); padding: 2rem; border-radius: 20px; border: 1px solid rgba(255,255,255,0.05); cursor: pointer; }
+        .glass-card:hover { border-color: var(--primary); transform: translateY(-5px); }
+
+        /* COMPARISON TABLE */
+        .comp-table { width: 100%; border-collapse: collapse; margin-top: 20px; background: rgba(0,0,0,0.3); font-size: 0.9rem; }
+        .comp-table th, .comp-table td { padding: 12px; border: 1px solid rgba(255,255,255,0.1); text-align: left; }
+        .comp-table th { background: var(--primary); color: #000; }
+        
+        /* BUTTONS */
+        .btn { background: var(--primary); color: #000; padding: 0.8rem 1.5rem; border-radius: 8px; font-weight: 700; border: none; cursor: pointer; }
+        .btn-outline { background: transparent; color: white; border: 1px solid white; padding: 0.8rem 1.5rem; border-radius: 8px; cursor: pointer; }
+
+        #quiz-page, #scanner-page, #comparison-page { display: none; padding-top: 30px; }
+
+        .threat-ping { position: absolute; width: 8px; height: 8px; background: var(--danger); border-radius: 50%; box-shadow: 0 0 10px var(--danger); animation: pulse 2s ease-out infinite; }
+        @keyframes pulse { 0% { transform: scale(1); opacity: 1; } 100% { transform: scale(4); opacity: 0; } }
+    </style>
+</head>
+<body>
+
+    <div id="intro-popup">
+        <div class="intro-card">
+            <h1 style="color:var(--primary)">PhishGuard_Pro</h1>
+            <p>Ready to secure your digital life? This app syncs your progress globally.</p>
+            <button class="btn" onclick="closeIntro()">Enter Training Zone</button>
+        </div>
+    </div>
+
+    <nav class="navbar">
+        <div class="logo" onclick="goHome()">PhishGuard_Pro</div>
+        <div style="font-family: 'JetBrains Mono'; font-size: 0.8rem; color:var(--primary)">CLOUD SYNC: ACTIVE</div>
+    </nav>
+
+    <main id="home-page">
+        <div class="container">
+            <div class="dashboard-grid">
+                <div class="radar-box">
+                    <div class="radar-screen" id="radar-screen"><div class="sweep"></div></div>
+                    <div style="background:#000; padding:10px; font-family:'JetBrains Mono'; color:var(--accent); font-size:0.8rem;">
+                        > GLOBAL THREATS: <span id="threat-val">...</span>
+                    </div>
+                </div>
+                <div class="leaderboard-box">
+                    <h3 style="color:var(--primary); margin-top:0;">🏆 GLOBAL TOP 5</h3>
+                    <div id="leaderboard-list">Syncing scores...</div>
+                </div>
+            </div>
+
+            <div class="feature-grid">
+                <div class="glass-card" onclick="openComparison()"><h2>🔍 5 Real vs Fake Links</h2><p>Look-alike examples.</p></div>
+                <div class="glass-card" onclick="openQuiz()"><h2>🧠 Tactical Quiz</h2><p>Test your skill.</p></div>
+                <div class="glass-card" onclick="openScanner()"><h2>🚨 Link Inspector</h2><p>Simple layman scanner.</p></div>
+            </div>
+        </div>
+    </main>
+
+    <section id="comparison-page" class="container">
+        <div class="glass-card">
+            <h2>Real vs Fake Comparison</h2>
+            <table class="comp-table">
+                <thead><tr><th>Service</th><th>Safe Link ✅</th><th>Danger Link ❌</th></tr></thead>
+                <tbody>
+                    <tr><td>Amazon</td><td>amazon.com</td><td style="color:var(--danger)">amazon-login.net</td></tr>
+                    <tr><td>PayPal</td><td>paypal.com</td><td style="color:var(--danger)">pay-pa1.com</td></tr>
+                    <tr><td>Google</td><td>google.com</td><td style="color:var(--danger)">google.verify.xyz</td></tr>
+                    <tr><td>Netflix</td><td>netflix.com</td><td style="color:var(--danger)">netfIix.com</td></tr>
+                    <tr><td>Bank</td><td>https://...</td><td style="color:var(--danger)">http://...</td></tr>
+                </tbody>
+            </table>
+            <br><button class="btn" onclick="goHome()">Back to Home</button>
+        </div>
+    </section>
+
+    <section id="scanner-page" class="container">
+        <div class="glass-card">
+            <h2>Layman Link Inspector</h2>
+            <input type="text" id="url-in" style="width:100%; padding:1rem; background:#000; border:1px solid var(--accent); color:white; margin:1rem 0;" placeholder="Paste link...">
+            <button class="btn" onclick="runSimpleScan()">Check Link</button>
+            <div id="scan-out"></div>
+            <br><button class="btn-outline" onclick="goHome()">Back to Home</button>
+        </div>
+    </section>
+
+    <section id="quiz-page" class="container">
+        <div class="glass-card">
+            <h2 id="quiz-q-text"></h2>
+            <div id="quiz-options"></div>
+            <div id="quiz-feedback" style="margin:20px 0; font-weight:bold;"></div>
+            <div style="display:flex; gap:10px;">
+                <button id="next-btn" class="btn" style="display:none" onclick="nextQuestion()">Next Question</button>
+                <button class="btn-outline" onclick="goHome()">Quit Quiz</button>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // REPLACE THESE WITH YOUR JSONBIN.IO KEYS
+        const BIN_ID = '69b559ecaa77b81da9e3cd82'; 
+        const API_KEY = '$2a$10$VhSGWLceggJx3MTI0E.nSuttor1nx4cxUr4eO0RsZHD7BXLcR4pdG';
+        const URL = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
+
+        function closeIntro() { document.getElementById('intro-popup').style.display = 'none'; }
+        function goHome() { 
+            document.querySelectorAll('main, section').forEach(s => s.style.display='none');
+            document.getElementById('home-page').style.display='block';
+            updateLeaderboard(); 
+        }
+        function openComparison() { document.querySelectorAll('main, section').forEach(s => s.style.display='none'); document.getElementById('comparison-page').style.display='block'; }
+        function openScanner() { document.querySelectorAll('main, section').forEach(s => s.style.display='none'); document.getElementById('scanner-page').style.display='block'; }
+
+        // --- GLOBAL SYNC LOGIC ---
+        async function updateLeaderboard() {
+            const list = document.getElementById('leaderboard-list');
+            try {
+                const res = await fetch(URL, { headers: { 'X-Master-Key': API_KEY }});
+                const data = await res.json();
+                const leaders = data.record;
+                list.innerHTML = leaders.sort((a,b)=>b.score-a.score).slice(0,5).map(l => `<div class="leader-entry"><span>${l.name}</span><span>${l.score}/5</span></div>`).join('');
+            } catch (e) { list.innerHTML = "Offline Mode"; }
+        }
+
+        async function saveScoreCloud(name, score) {
+            try {
+                const res = await fetch(URL, { headers: { 'X-Master-Key': API_KEY }});
+                const data = await res.json();
+                let leaders = data.record;
+                leaders.push({name, score});
+                await fetch(URL, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json', 'X-Master-Key': API_KEY },
+                    body: JSON.stringify(leaders)
+                });
+                updateLeaderboard();
+            } catch (e) { console.log("Save error", e); }
+        }
+
+        // --- OTHER LOGIC ---
+        function runSimpleScan() {
+            const val = document.getElementById('url-in').value;
+            const res = (val.includes('.xyz') || !val.startsWith('https')) ? "🚩 Red Flag Found!" : "✅ Looks standard.";
+            document.getElementById('scan-out').innerHTML = `<p>${res}</p>`;
+        }
+
+        const questions = [
+            { q: "Link: 'pay-pa1.com'. Safe?", a: ["Yes", "No"], c: 1, e: "Trick: '1' used instead of 'l'." },
+            { q: "Is 'http://google.com' (No S) safe?", a: ["Yes", "No"], c: 1, e: "The 'S' means Secure." },
+            { q: "Netflix link ends in '.xyz'. Safe?", a: ["Yes", "No"], c: 1, e: "Strange endings are dangerous." },
+            { q: "Email says: 'Click now or lose account!'. This is:", a: ["Professional", "Panic Trick"], c: 1, e: "Fear is a phishing tactic." },
+            { q: "Is 'netfIix.com' (Capital i) safe?", a: ["Yes", "No"], c: 1, e: "Hackers use similar letters." }
+        ];
+
+        let currentQ = 0, score = 0;
+        function openQuiz() { document.querySelectorAll('main, section').forEach(s => s.style.display='none'); document.getElementById('quiz-page').style.display='block'; currentQ=0; score=0; loadQ(); }
+        function loadQ() {
+            const d = questions[currentQ];
+            document.getElementById('quiz-q-text').innerText = d.q;
+            document.getElementById('quiz-feedback').innerText = "";
+            document.getElementById('next-btn').style.display = "none";
+            const optDiv = document.getElementById('quiz-options');
+            optDiv.innerHTML = '';
+            d.a.forEach((o, i) => {
+                const b = document.createElement('button');
+                b.className = 'btn-outline'; b.style.width="100%"; b.style.margin="5px 0"; b.innerText = o;
+                b.onclick = () => {
+                    if(i === d.c) { b.style.background="var(--primary)"; b.style.color="#000"; score++; }
+                    else { b.style.background="var(--danger)"; }
+                    document.getElementById('quiz-feedback').innerHTML = d.e;
+                    document.getElementById('next-btn').style.display = "block";
+                };
+                optDiv.appendChild(b);
+            });
+        }
+
+        function nextQuestion() {
+            currentQ++;
+            if(currentQ < questions.length) loadQ();
+            else {
+                const name = prompt("Score: " + score + "/5. Enter name for Global Rank:");
+                if(name) saveScoreCloud(name, score);
+                goHome();
+            }
+        }
+
+        setInterval(() => {
+            const ping = document.createElement('div');
+            ping.className = 'threat-ping';
+            ping.style.left = Math.random()*90+'%'; ping.style.top = Math.random()*90+'%';
+            document.getElementById('radar-screen').appendChild(ping);
+            setTimeout(()=>ping.remove(), 2000);
+            document.getElementById('threat-val').innerText = Math.floor(Math.random()*200);
+        }, 3000);
+
+        updateLeaderboard();
+    </script>
+</body>
+</html>
